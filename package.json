@@ -1,11 +1,11 @@
 {
-  "name": "babel-plugin-module-resolver",
+  "name": "@asseco/babel-plugin-module-resolver",
   "version": "3.2.0",
   "main": "lib/index.js",
   "description": "Module resolver plugin for Babel",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tleunen/babel-plugin-module-resolver.git"
+    "url": "https://github.com/Exictos-DCS/babel-plugin-module-resolver.git"
   },
   "engines": {
     "node": ">= 6.0.0"
@@ -82,5 +82,8 @@
       "src/**/*.js",
       "!src/log.js"
     ]
+  },
+  "publishConfig": {
+    "registry": "http://nexus.dcs.exictos.com/repository/channels-npm-releases/"
   }
 }

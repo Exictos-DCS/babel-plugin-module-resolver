@@ -9,7 +9,6 @@ import pkgUp from 'pkg-up';
 import { escapeRegExp } from './utils';
 import defaultResolvePath from './resolvePath';
 
-
 const defaultExtensions = ['.js', '.jsx', '.es', '.es6', '.mjs'];
 const defaultTransformedFunctions = [
   'require',
@@ -40,15 +39,11 @@ function normalizeCwd(optsCwd, currentFile) {
   let cwd;
 
   if (optsCwd in specialCwd) {
-    const startPath = (currentFile === 'unknown')
-      ? './'
-      : currentFile;
+    const startPath = currentFile === 'unknown' ? './' : currentFile;
 
     const computedCwd = specialCwd[optsCwd](startPath);
 
-    cwd = computedCwd
-      ? path.dirname(computedCwd)
-      : null;
+    cwd = computedCwd ? path.dirname(computedCwd) : null;
   } else {
     cwd = optsCwd;
   }
@@ -61,15 +56,14 @@ function normalizeRoot(optsRoot, cwd) {
     return [];
   }
 
-  const rootArray = Array.isArray(optsRoot)
-    ? optsRoot
-    : [optsRoot];
+  const rootArray = Array.isArray(optsRoot) ? optsRoot : [optsRoot];
 
   return rootArray
     .map(dirPath => path.resolve(cwd, dirPath))
     .reduce((resolvedDirs, absDirPath) => {
       if (glob.hasMagic(absDirPath)) {
-        const roots = glob.sync(absDirPath)
+        const roots = glob
+          .sync(absDirPath)
           .filter(resolvedPath => fs.lstatSync(resolvedPath).isDirectory());
 
         return [...resolvedDirs, ...roots];
@@ -95,11 +89,10 @@ function getAliasSubstitute(value, isKeyRegExp) {
 
   const parts = value.split('\\\\');
 
-  return execResult => parts
-    .map(part =>
-      part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''),
-    )
-    .join('\\');
+  return execResult =>
+    parts
+      .map(part => part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''))
+      .join('\\');
 }
 
 function normalizeAlias(optsAlias) {
@@ -112,11 +105,12 @@ function normalizeAlias(optsAlias) {
   return aliasArray.reduce((aliasPairs, alias) => {
     const aliasKeys = Object.keys(alias);
 
-    aliasKeys.forEach((key) => {
+    aliasKeys.forEach(key => {
       const isKeyRegExp = isRegExp(key);
       aliasPairs.push([
         getAliasTarget(key, isKeyRegExp),
         getAliasSubstitute(alias[key], isKeyRegExp),
+        alias[key],
       ]);
     });
 
@@ -141,6 +135,7 @@ export default createSelector(
   currentFile => (currentFile.includes('.') ? path.dirname(currentFile) : currentFile),
   (_, opts) => opts,
   (currentFile, opts) => {
+    const { module } = opts;
     const cwd = normalizeCwd(opts.cwd, currentFile);
     const root = normalizeRoot(opts.root, cwd);
     const alias = normalizeAlias(opts.alias);
@@ -154,11 +149,12 @@ export default createSelector(
       cwd,
       root,
       alias,
+      module,
       loglevel,
       transformFunctions,
       extensions,
       stripExtensions,
       resolvePath,
     };
-  },
+  }
 );

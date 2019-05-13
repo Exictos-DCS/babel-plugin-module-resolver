@@ -67,6 +67,7 @@ export function mapPathString(nodePath, state) {
   const currentFile = state.file.opts.filename;
 
   const modulePath = state.normalizedOpts.resolvePath(sourcePath, currentFile, state.opts);
+
   if (modulePath) {
     if (nodePath.node.pathResolved) {
       return;
